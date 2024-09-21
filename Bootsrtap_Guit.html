@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Small website with Bootstrap and JQuery</h2>
+    <img src="https://cdn.pixabay.com/photo/2022/01/30/13/33/github-6980894_960_720.png" class="img-rounded" id="LogoGit" width="50" height="50" />
+    <p>Let's start with a simple web page to check how to ask the user for info, and present it back to him</p>
+    <p>If you are not sure of the username, you can check it by using the button Check username</p>
+    <p>Input GitHub Username: <input type="text" id="NomRepo" value="Input the Username Here"></p>
+    <button id="btnRepos">Show the resulting api</button>
+    <button id="btnTest">Fill the table</button>
+    <button id="btnEstasSeguro">Check Username</button>
+</div>
+
+<table id ="myTableHeader" class="table table-striped">
+    <tr  class="bg-info">
+        <th>Name</th>
+        <th>Description</th>
+        <th>Stargazers</th>
+    </tr>
+
+    <tbody id="myTable">
+
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function(){
+      $("#myTableHeader").hide();
+      $("#btnRepos").click(function(){
+        usergit = $("#NomRepo").val();
+        alert('https://api.github.com/users/' + usergit + '/repos');
+      });
+      $("#btnEstasSeguro").click(function(){
+        window.open('https://github.com/', '_blank');
+      });
+      $("#btnTest").click(function(){
+        $("#myTableHeader").show();
+        buscaRepositorios($("#NomRepo").val());
+      });
+    });
+    var myData = []
+    function buscaRepositorios(user){
+        $.ajax({
+            url: 'https://api.github.com/users/' + user + '/repos',
+            method: 'GET',
+            success: function(repos) {
+                myData = repos;
+                console.log(myData);
+                if (myData.length == 0)
+                {
+                alert('ERROR, Wrong username. Use the Check Button.');
+                }
+                else
+                {
+                buildTable(myData);
+                }
+            },
+            error: function(){
+                alert('ERROR');
+            },
+        });
+    }
+
+    function buildTable(data){
+		var table = document.getElementById('myTable')
+
+		for (var i = 0; i < data.length; i++){
+			var row = `<tr>
+							<td>${data[i].name}</td>
+							<td>${data[i].description}</td>
+							<td>${data[i].stargazers_count}</td>
+					  </tr>`
+			table.innerHTML += row
+
+
+		}
+    }
+</script>
+</body>
+</html>
